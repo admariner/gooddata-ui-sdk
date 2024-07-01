@@ -136,6 +136,8 @@ import { IAttributeFilter } from '@gooddata/sdk-model';
 import { IAttributeFilterBaseProps } from '@gooddata/sdk-ui-filters';
 import { IAttributeMetadataObject } from '@gooddata/sdk-model';
 import { IAttributeOrMeasure } from '@gooddata/sdk-model';
+import { IAutomationMetadataObject } from '@gooddata/sdk-model';
+import { IAutomationMetadataObjectDefinition } from '@gooddata/sdk-model';
 import { IAvailableDrillTargets } from '@gooddata/sdk-ui';
 import { IBackendCapabilities } from '@gooddata/sdk-backend-spi';
 import { IBaseWidget } from '@gooddata/sdk-model';
@@ -229,8 +231,6 @@ import { IRelativeDateFilter } from '@gooddata/sdk-model';
 import { IRenderListItemProps } from '@gooddata/sdk-ui-kit';
 import { IResultWarning } from '@gooddata/sdk-model';
 import { IRichTextWidget } from '@gooddata/sdk-model';
-import { IScheduledMail } from '@gooddata/sdk-model';
-import { IScheduledMailDefinition } from '@gooddata/sdk-model';
 import { ISeparators } from '@gooddata/sdk-model';
 import { ISettings } from '@gooddata/sdk-model';
 import { IShareDialogInteractionData } from '@gooddata/sdk-ui-kit';
@@ -243,6 +243,7 @@ import { ITranslations } from '@gooddata/sdk-ui';
 import { IUser } from '@gooddata/sdk-model';
 import { IUserWorkspaceSettings } from '@gooddata/sdk-backend-spi';
 import { IVisualizationCallbacks } from '@gooddata/sdk-ui';
+import { IWebhookMetadataObject } from '@gooddata/sdk-model';
 import { IWidget } from '@gooddata/sdk-model';
 import { IWidgetAlert } from '@gooddata/sdk-model';
 import { IWidgetAlertDefinition } from '@gooddata/sdk-model';
@@ -265,6 +266,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { PlatformEdition } from '@gooddata/sdk-model';
 import { QueryCacheEntryResult as QueryCacheEntryResult_2 } from '../store/_infra/queryService.js';
 import { default as React_2 } from 'react';
+import { ReactNode } from 'react';
 import { ReactReduxContextValue } from 'react-redux';
 import { Reducer } from '@reduxjs/toolkit';
 import { RefAttributes } from 'react';
@@ -1015,12 +1017,12 @@ export interface CreateScheduledEmail extends IDashboardCommand {
 }
 
 // @beta
-export function createScheduledEmail(scheduledEmail: IScheduledMailDefinition, filterContext?: IFilterContextDefinition, correlationId?: string): CreateScheduledEmail;
+export function createScheduledEmail(scheduledEmail: IAutomationMetadataObjectDefinition, filterContext?: IFilterContextDefinition, correlationId?: string): CreateScheduledEmail;
 
 // @beta
 export interface CreateScheduledEmailPayload {
     readonly filterContext?: IFilterContextDefinition;
-    readonly scheduledEmail: IScheduledMailDefinition;
+    readonly scheduledEmail: IAutomationMetadataObjectDefinition;
 }
 
 // @beta (undocumented)
@@ -1424,7 +1426,9 @@ export interface DashboardConfig {
     allowUnfinishedFeatures?: boolean;
     colorPalette?: IColorPalette;
     dateFilterConfig?: IDateFilterConfig;
+    disableCrossFiltering?: boolean;
     disableDefaultDrills?: boolean;
+    disableUserFilterReset?: boolean;
     enableFilterValuesResolutionInDrillEvents?: boolean;
     // @internal
     exportId?: string;
@@ -1556,7 +1560,7 @@ export interface DashboardDeletedPayload {
 }
 
 // @public (undocumented)
-export type DashboardDescriptor = Pick<IDashboard, "title" | "description" | "tags" | "disableCrossFiltering"> & IAccessControlAware;
+export type DashboardDescriptor = Pick<IDashboard, "title" | "description" | "tags" | "disableCrossFiltering" | "disableUserFilterReset" | "disableUserFilterSave"> & IAccessControlAware;
 
 // @public (undocumented)
 export type DashboardDispatch = Dispatch<AnyAction>;
@@ -2504,7 +2508,7 @@ export interface DashboardScheduledEmailCreated extends IDashboardEvent {
 
 // @beta
 export interface DashboardScheduledEmailCreatedPayload {
-    readonly scheduledEmail: IScheduledMail;
+    readonly scheduledEmail: IAutomationMetadataObject;
 }
 
 // @beta
@@ -2590,6 +2594,8 @@ export interface DashboardState {
     ui: UiState;
     // (undocumented)
     user: UserState;
+    // @alpha (undocumented)
+    webhooks: WebhooksState;
 }
 
 // @public
@@ -2856,7 +2862,7 @@ export function DefaultSaveAsNewButton({ isVisible, onSaveAsNewClick }: ISaveAsN
 export function DefaultSaveButton({ isVisible, isEnabled, isSaving, buttonTitle, buttonValue, onSaveClick, }: ISaveButtonProps): React_2.JSX.Element | null;
 
 // @alpha (undocumented)
-export const DefaultScheduledEmailDialog: (props: IScheduledEmailDialogProps) => JSX.Element | null;
+export const DefaultScheduledEmailDialog: React_2.FC<IScheduledEmailDialogProps>;
 
 // @alpha (undocumented)
 export const DefaultScheduledEmailManagementDialog: React_2.FC<IScheduledEmailManagementDialogProps>;
@@ -4411,7 +4417,7 @@ export interface IMenuButtonItemButton extends IMenuItemCommonProps {
     itemName: string;
     // (undocumented)
     onClick?: () => void;
-    tooltip?: string;
+    tooltip?: string | ReactNode;
     // (undocumented)
     type: "button";
 }
@@ -4706,27 +4712,32 @@ export function isBrokenAlertDateFilterInfo(item: IBrokenAlertFilterBasicInfo): 
 
 // @alpha (undocumented)
 export interface IScheduledEmailDialogProps {
-    editSchedule?: IScheduledMail;
+    automations: IAutomationMetadataObject[];
+    editSchedule?: IAutomationMetadataObject;
     isVisible?: boolean;
     onCancel?: () => void;
     onError?: (error: GoodDataSdkError) => void;
-    onSave?: (scheduledEmailDefinition: IScheduledMailDefinition) => void;
+    onSave?: (scheduledEmailDefinition: IAutomationMetadataObject) => void;
     onSaveError?: (error: GoodDataSdkError) => void;
     onSaveSuccess?: () => void;
-    onSubmit?: (scheduledEmailDefinition: IScheduledMailDefinition) => void;
+    onSubmit?: (scheduledEmailDefinition: IAutomationMetadataObject | IAutomationMetadataObjectDefinition) => void;
     onSuccess?: () => void;
     users: IWorkspaceUser[];
+    webhooks: IWebhookMetadataObject[];
 }
 
 // @alpha (undocumented)
 export interface IScheduledEmailManagementDialogProps {
+    automations: IAutomationMetadataObject[];
+    isLoadingScheduleData: boolean;
     isVisible?: boolean;
     onAdd?: () => void;
     onClose?: () => void;
     onDeleteError?: (error: GoodDataSdkError) => void;
     onDeleteSuccess?: () => void;
-    onEdit?: (scheduledMail: IScheduledMail, users: IWorkspaceUser[]) => void;
-    onLoadError?: (error: GoodDataSdkError) => void;
+    onEdit?: (scheduledMail: IAutomationMetadataObject) => void;
+    scheduleDataError?: GoodDataSdkError;
+    webhooks: IWebhookMetadataObject[];
 }
 
 // @internal
@@ -6396,12 +6407,12 @@ export interface SaveScheduledEmail extends IDashboardCommand {
 }
 
 // @beta
-export function saveScheduledEmail(scheduledEmail: IScheduledMailDefinition, filterContextRef?: ObjRef, correlationId?: string): SaveScheduledEmail;
+export function saveScheduledEmail(scheduledEmail: IAutomationMetadataObject, filterContextRef?: ObjRef, correlationId?: string): SaveScheduledEmail;
 
 // @beta
 export interface SaveScheduledEmailPayload {
     readonly filterContextRef?: ObjRef;
-    readonly scheduledEmail: IScheduledMailDefinition;
+    readonly scheduledEmail: IAutomationMetadataObject;
 }
 
 // @public (undocumented)
@@ -6718,6 +6729,12 @@ export const selectDateHierarchyTemplates: DashboardSelector<IDateHierarchyTempl
 export const selectDisableDashboardCrossFiltering: DashboardSelector<boolean>;
 
 // @public
+export const selectDisableDashboardUserFilterReset: DashboardSelector<boolean>;
+
+// @public
+export const selectDisableDashboardUserFilterSave: DashboardSelector<boolean>;
+
+// @public
 export const selectDisableDefaultDrills: DashboardSelector<boolean>;
 
 // @internal
@@ -6837,6 +6854,9 @@ export const selectEnableRenamingProjectToWorkspace: DashboardSelector<boolean>;
 // @internal
 export const selectEnableRichTextDescriptions: DashboardSelector<boolean>;
 
+// @alpha (undocumented)
+export const selectEnableScheduling: DashboardSelector<boolean>;
+
 // @internal
 export const selectEnableUnavailableItemsVisibility: DashboardSelector<boolean>;
 
@@ -6845,6 +6865,15 @@ export const selectEnableWidgetCustomHeight: DashboardSelector<boolean>;
 
 // @alpha (undocumented)
 export const selectEntitlementExportPdf: DashboardSelector<IEntitlementDescriptor | undefined>;
+
+// @alpha (undocumented)
+export const selectEntitlementMaxAutomationRecipients: DashboardSelector<IEntitlementDescriptor | undefined>;
+
+// @alpha (undocumented)
+export const selectEntitlementMaxAutomations: DashboardSelector<IEntitlementDescriptor | undefined>;
+
+// @alpha (undocumented)
+export const selectEntitlementMinimumRecurrenceMinutes: DashboardSelector<IEntitlementDescriptor | undefined>;
 
 // @alpha (undocumented)
 export const selectExecutionResult: (state: DashboardState, id: EntityId) => IExecutionResultEnvelope | undefined;
@@ -6986,6 +7015,12 @@ export const selectIsDeleteDialogOpen: DashboardSelector<boolean>;
 
 // @internal
 export const selectIsDeleteFilterButtonEnabled: DashboardSelector<boolean>;
+
+// @internal
+export const selectIsDisabledCrossFiltering: DashboardSelector<boolean>;
+
+// @internal
+export const selectIsDisableUserFilterReset: DashboardSelector<boolean>;
 
 // @internal (undocumented)
 export const selectIsDraggingWidget: DashboardSelector<boolean>;
@@ -7196,6 +7231,9 @@ export const selectSupportsSingleSelectDependentFilters: DashboardSelector<boole
 
 // @internal (undocumented)
 export const selectValidConfiguredDrillsByWidgetRef: (ref: ObjRef) => DashboardSelector<IImplicitDrillWithPredicates[]>;
+
+// @alpha
+export const selectWebhooks: DashboardSelector<Webhooks>;
 
 // @internal
 export const selectWeekStart: DashboardSelector<WeekStart>;
@@ -8220,16 +8258,16 @@ export type UseDashboardQueryProcessingResult<TQueryCreatorArgs extends any[], T
 };
 
 // @alpha
-export const useDashboardScheduledEmails: () => {
+export const useDashboardScheduledEmails: ({ onReload }?: {
+    onReload?: (() => void) | undefined;
+}) => {
     isScheduledEmailingVisible: boolean;
-    enableInsightExportScheduling: boolean;
     defaultOnScheduleEmailing: () => void;
     isScheduleEmailingDialogOpen: boolean;
     isScheduleEmailingManagementDialogOpen: boolean;
-    onScheduleEmailingOpen: (attachmentRef?: ObjRef) => void;
-    onScheduleEmailingManagementEdit: (schedule: IScheduledMail, users: IWorkspaceUser[]) => void;
-    scheduledEmailToEdit: IScheduledMail | undefined;
-    users: IWorkspaceUser[];
+    onScheduleEmailingOpen: () => void;
+    onScheduleEmailingManagementEdit: (schedule: IAutomationMetadataObject) => void;
+    scheduledEmailToEdit: IAutomationMetadataObject | undefined;
     onScheduleEmailingCancel: () => void;
     onScheduleEmailingCreateError: () => void;
     onScheduleEmailingCreateSuccess: () => void;
@@ -8240,6 +8278,19 @@ export const useDashboardScheduledEmails: () => {
     onScheduleEmailingManagementLoadingError: () => void;
     onScheduleEmailingManagementDeleteSuccess: () => void;
     onScheduleEmailingManagementDeleteError: () => void;
+    numberOfAvailableWebhooks: number;
+};
+
+// @alpha
+export const useDashboardScheduledEmailsData: ({ reloadId, onLoadError, }: {
+    reloadId: number;
+    onLoadError: () => void;
+}) => {
+    isLoading: boolean;
+    loadError: any;
+    webhooks: IWebhookMetadataObject[];
+    automations: IAutomationMetadataObject[];
+    users: IWorkspaceUser[];
 };
 
 // @public
@@ -8456,6 +8507,15 @@ export function useWidgetSelection(widgetRef?: ObjRef): IUseWidgetSelectionResul
 
 // @internal (undocumented)
 export type ValuesLimitingItem = IDashboardAttributeFilterParentItem | ObjRef | IDashboardDependentDateFilter;
+
+// @alpha
+export type Webhooks = IWebhookMetadataObject[];
+
+// @alpha (undocumented)
+export interface WebhooksState {
+    // (undocumented)
+    webhooks: Webhooks;
+}
 
 // @public (undocumented)
 export type WidgetComponentProvider = (widget: ExtendedDashboardWidget) => CustomDashboardWidgetComponent;

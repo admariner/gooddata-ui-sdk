@@ -6,6 +6,7 @@ import { CancelableOptions } from "@gooddata/sdk-backend-spi";
 
 import { ILoadElementsResult, ILoadElementsOptions } from "../../../types/index.js";
 import {
+    selectAttributeFilterDisplayAsLabel,
     selectAttributeFilterDisplayForm,
     selectHiddenElementsAsAttributeElements,
 } from "../filter/filterSelectors.js";
@@ -28,18 +29,35 @@ export function* elementsSaga(
     );
 
     const attribute: ReturnType<typeof selectAttribute> = yield select(selectAttribute);
+
     const attributeFilterDisplayFormRef: ReturnType<typeof selectAttributeFilterDisplayForm> = yield select(
         selectAttributeFilterDisplayForm,
     );
 
+    const attributeFilterDisplayAsDisplayFormRef: ReturnType<typeof selectAttributeFilterDisplayAsLabel> =
+        yield select(selectAttributeFilterDisplayAsLabel);
+
     const staticElements: ReturnType<typeof selectStaticElements> = yield select(selectStaticElements);
+
+    const { enableDuplicatedLabelValuesInAttributeFilter } = context;
+
+    const filterByPrimaryLabelProp =
+        enableDuplicatedLabelValuesInAttributeFilter &&
+        attributeFilterDisplayAsDisplayFormRef &&
+        !options.search // when searching by string, we need to apply it to the displayAsLabel directly not primary label
+            ? { filterByPrimaryLabel: true }
+            : {};
 
     const elementsQueryResult: PromiseFnReturnType<typeof loadElements> = yield call(
         loadElements,
         context,
         {
-            displayFormRef: attributeFilterDisplayFormRef,
+            displayFormRef:
+                enableDuplicatedLabelValuesInAttributeFilter && attributeFilterDisplayAsDisplayFormRef
+                    ? attributeFilterDisplayAsDisplayFormRef
+                    : attributeFilterDisplayFormRef,
             ...options,
+            ...filterByPrimaryLabelProp,
         },
         {
             hiddenElements,

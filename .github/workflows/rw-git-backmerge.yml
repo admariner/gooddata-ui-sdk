@@ -82,7 +82,7 @@ jobs:
           done
 
           # commit only if bump produced some changes
-          git diff --exit-code || git commit --no-verify -a -m "chore: bumped version of sdk packages to $version which is in $TARGET_BRANCH" -m "" -m "TRIVIAL"
+          git diff --exit-code || git commit --no-verify -a -m "chore: bumped version of sdk packages to $version which is in $TARGET_BRANCH" -m "risk: nonprod"
 
           # rush bump to something that's in target branch
           git merge --verbose --no-ff origin/$TARGET_BRANCH || true
@@ -117,5 +117,5 @@ jobs:
         env:
           SOURCE_BRANCH: ${{ inputs.source-branch }}
           TARGET_BRANCH: ${{ inputs.target-branch }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB_YENKINS_ADMIN }}
         shell: bash

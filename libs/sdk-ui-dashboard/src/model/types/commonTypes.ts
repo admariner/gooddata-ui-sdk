@@ -1,4 +1,4 @@
-// (C) 2021-2023 GoodData Corporation
+// (C) 2021-2024 GoodData Corporation
 import { IAnalyticalBackend } from "@gooddata/sdk-backend-spi";
 import {
     IColorPalette,
@@ -8,6 +8,7 @@ import {
     ISettings,
     ISeparators,
     IEntitlementDescriptor,
+    IWebhookMetadataObject,
 } from "@gooddata/sdk-model";
 import { ILocale } from "@gooddata/sdk-ui";
 import keys from "lodash/keys.js";
@@ -212,6 +213,24 @@ export interface DashboardConfig {
      * priority over other stored or supplied filter context.
      */
     exportId?: string;
+
+    /**
+     * Disable cross filtering
+     *
+     * @remarks
+     * If set to true, cross filtering will be forced disabled even if the dashboard is configured to support it.
+     * If set to false or not set, cross filtering will be enabled if the dashboard is configured to support it.
+     */
+    disableCrossFiltering?: boolean;
+
+    /**
+     * Disable user filter reset
+     *
+     * @remarks
+     * If set to true, user filter reset will be disabled even if the dashboard is configured to support it.
+     * If set to false or not set, user filter reset will be enabled if the dashboard is configured to support it.
+     */
+    disableUserFilterReset?: boolean;
 }
 
 /**
@@ -439,3 +458,10 @@ export type FiltersInfo = {
     filters: IDashboardFilter[];
     resolvedFilterValues?: IResolvedFilterValues;
 };
+
+/**
+ * Organization webhooks
+ *
+ * @alpha
+ */
+export type Webhooks = IWebhookMetadataObject[];

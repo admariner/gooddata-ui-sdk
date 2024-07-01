@@ -1,6 +1,6 @@
 {
     "name": "@gooddata/sdk-ui-ext",
-    "version": "10.5.0-alpha.3",
+    "version": "10.6.0-alpha.10",
     "description": "GoodData.UI SDK - Extensions",
     "repository": {
         "type": "git",
@@ -61,7 +61,6 @@
         "@gooddata/sdk-model": "workspace:*",
         "@gooddata/sdk-ui": "workspace:*",
         "@gooddata/sdk-ui-charts": "workspace:*",
-        "@gooddata/sdk-ui-filters": "workspace:*",
         "@gooddata/sdk-ui-geo": "workspace:*",
         "@gooddata/sdk-ui-kit": "workspace:*",
         "@gooddata/sdk-ui-pivot": "workspace:*",

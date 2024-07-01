@@ -80,9 +80,17 @@ export {
     selectEnableKDAttributeFilterDatesValidation,
     selectEnableDuplicatedLabelValuesInAttributeFilter,
     selectEnableRichTextDescriptions,
+    selectIsDisabledCrossFiltering,
+    selectIsDisableUserFilterReset,
+    selectEnableScheduling,
 } from "./config/configSelectors.js";
 export { EntitlementsState } from "./entitlements/entitlementsState.js";
-export { selectEntitlementExportPdf } from "./entitlements/entitlementsSelectors.js";
+export {
+    selectEntitlementExportPdf,
+    selectEntitlementMaxAutomationRecipients,
+    selectEntitlementMaxAutomations,
+    selectEntitlementMinimumRecurrenceMinutes,
+} from "./entitlements/entitlementsSelectors.js";
 
 export { PermissionsState } from "./permissions/permissionsState.js";
 export {
@@ -271,6 +279,8 @@ export {
     selectIsDashboardPrivate,
     selectDashboardWorkingDefinition,
     selectDisableDashboardCrossFiltering,
+    selectDisableDashboardUserFilterReset,
+    selectDisableDashboardUserFilterSave,
 } from "./meta/metaSelectors.js";
 export {
     selectListedDashboards,
@@ -356,3 +366,6 @@ export {
     DashboardStoreAccessorRepository,
     SingleDashboardStoreAccessor,
 } from "./storeAccessors/index.js";
+
+export { WebhooksState } from "./webhooks/webhooksState.js";
+export { selectWebhooks } from "./webhooks/webhooksSelectors.js";

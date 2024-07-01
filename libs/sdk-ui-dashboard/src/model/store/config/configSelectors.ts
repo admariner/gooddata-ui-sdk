@@ -395,6 +395,12 @@ export const selectEnableInsightExportScheduling: DashboardSelector<boolean> = c
 );
 
 /**
+ * @alpha
+ */
+export const selectEnableScheduling: DashboardSelector<boolean> = createSelector(selectConfig, (state) => {
+    return state.settings?.enableScheduling ?? false;
+});
+/**
  * Returns whether analytical dashboard permissions are enabled
  *
  * @internal
@@ -553,6 +559,30 @@ export const selectIsAlternativeDisplayFormSelectionEnabled: DashboardSelector<b
 export const selectIsShareButtonHidden: DashboardSelector<boolean> = createSelector(selectConfig, (state) => {
     return state.hideShareButton ?? false;
 });
+
+/**
+ * Returns whether cross filtering is disabled by config
+ *
+ * @internal
+ */
+export const selectIsDisabledCrossFiltering: DashboardSelector<boolean> = createSelector(
+    selectConfig,
+    (state) => {
+        return state.disableCrossFiltering ?? false;
+    },
+);
+
+/**
+ * Returns whether user filter reset is disabled by config
+ *
+ * @internal
+ */
+export const selectIsDisableUserFilterReset: DashboardSelector<boolean> = createSelector(
+    selectConfig,
+    (state) => {
+        return state.disableUserFilterReset ?? false;
+    },
+);
 
 /**
  * Returns whether drill down is enabled.
